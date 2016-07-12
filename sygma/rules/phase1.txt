@@ -1,0 +1,294 @@
+###################################################################################
+#
+# Rules for SyGMa
+#
+# - Format: smirks<tab>probability<tab>rulename
+# - rulenames must be unique !
+# - forward slashes are not allowed in rulename !
+#
+#
+# V1.0   - as used for evaluation - Progress Memo 26 Oct 2005
+# V1.1   - sulfation also on aliphatic hydroxyl
+#        - 1st two steroid specific rules added
+#        - NH1 ring closures excluded for amide NH1 groups,
+#          and allow aromatic bonds in chain
+#        - dehydrogenation alpha,beta to carbonyl generalized to alpha,beta to SP2
+# V1.2   - add deiodonisation
+#        - add nitrile_to_amide
+#        - nicer product structures (by removing some of the mapping)
+#          ring closure
+#          hydrolysis (relevant for ring esters and amides
+#          epoxide hydrolysis
+#          glucuronidation
+#          acetyl shift
+#          glycination
+# V1.3   - add oxidation_C=N and aromatic_oxidation_(nitrogen_containing_5ring)
+#          (mostly relevant to aromatic heterocycles, replaces imine_oxidation)
+#        - calculate probabilities with new script, some scores have slightly
+#          changed (better now) due to different counting of cleavage products
+# V1.3.1 - 22 Feb 2006: ring closure to include chains with aromatic atoms
+# V1.3.2 - 29 March 2006: added n-dealkylation & n-demethylation off aromatic N
+# V2.0   - July 2006: added dealkylation of methylenedioxyphenyl
+#        - !! New scores: now based on "unique" set of reactants
+# V2.0.1 - sulfide_oxidation_(c-S-c) extended to include aromatic S
+#        - aromatic hydroxylation extended to include ortho and meta positions
+#          relative to carbon substituents
+# V2.0.2 - sulfide_oxidation_(c-S-c) splitted into c-S-c, c-s-c and thiophene
+# V2.1   - June 2008: added n-deglycosidation
+#        - sulfide_oxidation_(c-s-c) has been removed; the sulfur atoms in
+#          these reactions are considered aliphatic by new version of reactor
+#          and are now covered by sulfide_oxidation_(c-S-c)
+# V2.2   - September 2009: added 3 rules for dehydration
+#        - added: aromatic dehydroxylation
+#        - added: oxidative decarboxylation
+# v2.3   - March 2010: oxidation_to_quinone improved, i.e. check for a hydrogen
+#          atom on reacting N (could previously result in e.g. =N=)
+# V3.0   - Feb 2012: added het-O-demethylation
+#        - added glucuronidation of N-OH
+# V3.1   - Oct 2012: split of double bond reduction (benzylic double bonds
+#          have increased probability)
+# V4.0   - March 2015: aliphatic glycination of glycin not allowed
+# TODO   - Check deglycosidation, is currently only 5-rings, could be made more general?
+###################################################################################
+
+# *** PHASE 1 ***
+
+# -- N-dealkylation --
+#
+[*;!c:1][NH1;X3:2][CH3]>>[*:1][N:2]	0.546	N-demethylation_(R-NHCH3)	#77/141
+[c:1][NH1;X3:2][CH3]>>[c:1][N:2]	0.857	N-demethylation_(c-NHCH3)	#12/14
+[*;!c:1][NH0;X3:2]([CH3])[CH3:3]>>[*:1][N:2][CH3:3]	0.587	N-demethylation_(R-N(CH3)2)	#101/172
+[c:1][NH0;X3:2]([CH3])[CH3:3]>>[c:1][N:2][CH3:3]	0.684	N-demethylation_(c-N(CH3)2)	#13/19
+[*;!$([CH3]):1][NH0;X3:2]([CH3])[#6;!$([CH3]):3]>>[*:1][N:2][*:3]	0.418	N-demethylation_(R-N(CR)CH3)	#142/340
+[n:1][CH3]>>[nH1:1]	0.253	N-demethylation_(nCH3)	#39/154
+#
+[N;X3:2][CH1]([CH3])[CH3]>>[N:2]	0.371	N-depropylation	#23/62
+# split ? [NH1;X3:2][CH1]([CH3])[CH3]>>[N:2]	0.114504	secondary_N-depropylation	# 15/131
+# split ? [NH0;X3:2][CH1]([CH3])[CH3]>>[N:2]	0.521739	tertiary_N-depropylation	# 12/23
+#
+# no examples: [NX3:2][C:3]1[O:4][C:5][C:6][C:7]1>>([N:2].O[C:3]1[O:4][C:5][C:6][C:7]1)	0.171875	N-deglycosidation	# 11/64
+[n:2][C:3]1[O:4][C:5][C:6][C:7]1>>([nH1:2].O[C:3]1[O:4][C:5][C:6][C:7]1)	0.113	n-deglycosidation	#17/150
+#
+[NX3:2][CX3;H1]=O>>[N:2]	0.444	N-deformylation	#12/27
+#
+[*;!C,!X4:1][N;X3:2]1[C:3][C:4][N;X3:5][CH2][CH2]1>>[*:1][N:2][C:3][C:4][N:5]	0.033	N-dealkylation_(piperazine)	#5/151
+[N;X3:2]1[C:3][C:4][O:5][CH2][CH2]1>>[N:2][C:3][C:4][O:5]	0.100	N-dealkylation_(morpholine)	#5/50
+#
+[*;!c:1][NH1;X3:2]!@[CH2:3][#6:4]>>([*:1][N:2].O[C:3][*:4])	0.079	N-dealkylation_(R-NHCH2-alkyl)	#90/1138
+[c:1][NH1;X3:2]!@[CH2:3][#6:4]>>([c:1][N:2].O[C:3][*:4])	0.134	N-dealkylation_(c-NHCH2-alkyl)	#15/112
+[NH0;X3:2]!@[C;X4;H2:4]>>([N:2].O[C:4])	0.119	N-dealkylation_(tertiaryN-CH2-alkyl)	#246/2074
+[#6:1][N+;X4:2]([#6:3])([CH3:4])!@[#6;H1,H2:5]>>([*:1][N:2]([*:3])[C:4].O[*:5])	0.106	N-dealkylation_(quarternary_N)	#5/47
+[n:1][CH2:2]>>([nH:1].O[C:2])	0.042	N-dealkylation_(nCH2)	#19/452
+#
+# low occurence [NH0;X3:2]!@[C;X4;H1:4][c:5]>>[N:2].O[C:4][c:5]		tertiary_N-dealkylation2
+# not predictive [#6:1][N:2]([#6:3])[c:4]>>[#6:1][N:2][#6:3].O[c:4]		tertiary_N-dealkylation
+# not predictive [#6:1]!@[N;R;X3:2]([CH2:3])[CH2:4]>>[#6:1][N:2].O[C:3].O[C:4]
+
+# -- O-dealkylation --
+#
+[#6;!$(C=O):1][O:2][CH3]>>[*:1][O:2]	0.277	O-demethylation	#224/808
+[*;!#6;!$(*=O):1][O:2][CH3]>>[*:1][O:2]	0.200	het-O-demethylation	#6/30
+#
+[C;!$(C(O)~[!#6]);!$([CH3]):1][O;!$(O1CC1):2][C;X4;!$(C(O)~[!#6]);H1,H2:3]>>([C:1][O:2].O[C:3])	0.087	O-dealkylation_(aliphatic)	#28/320
+[c:1][O:2][C;X4;!$(C(O)~[!#6]);H1,H2:3]>>([c:1][O:2].O[C:3])	0.087	O-dealkylation_(aromatic)	#67/767
+[#6;!$([CH3]);!$(C=O):1][O:2][C:3]1[O:4][C:5][C:6][C:7][C:8]1>>([*:1][O:2].O[C:3]1[O:4][C:5][C:6][C:7][C:8]1)	0.170	O-deglycosidation	#82/482
+[O:1]1[c:2]2[c:3][c:4][c:5][c:6][c:7]2[O:8][CH2]1>>[O:1][c:2]2[c:3][c:4][c:5][c:6][c:7]2[O:8]	0.359	O-dealkylation_(methylenedioxyphenyl)a	#14/39
+[O:1]1[c:2]2[c:3][c:4][c:5][c:6][c:7]2[O:8][CH2:9]1>>([O:1]1[c:2]2[c:3][c:4][c:5][c:6][c:7]2[O:8].[CH2:9]1)	0.103	O-dealkylation_(methylenedioxyphenyl)b	#8/78
+
+# -- S-dealkylation --
+[c:1][S:2][CH2:3]>>([c:1][S:2].O[C:3])	0.050	S-dealkylation_c-SCH2-R	#6/119
+
+# -- aromatic hydroxylation --
+# [cH1:1]>>[c:1]O	1	aromatic_hydroxylation_(general)
+[#6:1]~[a:2]1[a:3][a:4][cH1:5][a:6][a:7]1>>[*:1]~[a:2]1[a:3][a:4][c:5](O)[a:6][a:7]1	0.061	aromatic_hydroxylation_(para_to_carbon)	#187/3041
+[#7:1]~[a:2]1[a:3][a:4][cH1:5][a:6][a:7]1>>[*:1]~[a:2]1[a:3][a:4][c:5](O)[a:6][a:7]1	0.145	aromatic_hydroxylation_(para_to_nitrogen)	#152/1045
+[#8:1]~[a:2]1[a:3][a:4][cH1:5][a:6][a:7]1>>[*:1]~[a:2]1[a:3][a:4][c:5](O)[a:6][a:7]1	0.056	aromatic_hydroxylation_(para_to_oxygen)	#56/1005
+[#6:1]~[a:2]1[a;!$(a(a)(a)[#6,#7,#8]):3][cH1:4][a;!$(a(a)(a)[#6,#7,#8]):5][a:6][a;!$(a(a)(a)[#6,#7,#8]):7]1>>[*:1]~[a:2]1[a:3][c:4](O)[a:5][a:6][a:7]1	0.016	aromatic_hydroxylation_(meta_to_carbon)	#24/1522
+[#7:1]~[a:2]1[cH1:3][a;!$(a(a)(a)[#6,#7,#8]):4][a:5][a;!$(a(a)(a)[#6,#7,#8]):6][a:7]1>>[*:1]~[a:2]1[c:3](O)[a:4][a:5][a:6][a:7]1	0.030	aromatic_hydroxylation_(ortho_to_nitrogen)	#37/1244
+[#8:1]~[a:2]1[cH1:3][a;!$(a(a)(a)[#6,#7,#8]):4][a:5][a;!$(a(a)(a)[#6,#7,#8]):6][a:7]1>>[*:1]~[a:2]1[c:3](O)[a:4][a:5][a:6][a:7]1	0.032	aromatic_hydroxylation_(ortho_to_oxygen)	#32/987
+[#6,#7,#8:1]~[a:2]1[cH1:3][a;$(a(a)(a)[#6,#7,#8]):4][a:5][a;!$(a(a)(a)[#6,#7,#8]):6][a:7]1>>[*:1]~[a:2]1[c:3](O)[a:4][a:5][a:6][a:7]1	0.013	aromatic_hydroxylation_(ortho_to_2_substituents)	#15/1158
+[cH1;$(c1saaa1):2]>>[c:2]O	0.059	aromatic_hydroxylation_(sulfur_containing_5ring)	#3/51
+[nH0:1][cH1;$(c1naan1):2]>>[nH1:1]-[cH0:2]=O	0.109	aromatic_oxidation_(nitrogen_containing_5ring)	#21/193
+[c;$(cc[OH1]):1][OH1]>>[c:1]	0.038	aromatic_dehydroxylation	#8/213
+
+# -- carboxylation --
+# carboxylation_is_combination_of_"aliphatic_primary_carbon_hydroxylation"_and_"alcohol_to_acid_oxidation"_->_queries_identical_to_primary_carbon_hydroxylation
+[C;X4;H0;$(C[!C]):1][CH3:2]>>[C:1][C:2](=O)O	0.013	carboxylation_(primary_carbon_next_to_quart_carbon)	#5/395
+[CH1;$(C(-[#6])(-[#6])-[CH3]):1][CH3:2]>>[C:1][C:2](=O)O	0.014	carboxylation_(primary_carbon_next_to_tert_carbon)	#9/624
+[#6:1][CH2:2][CH3:3]>>[*:1][C:2][C:3](=O)O	0.030	carboxylation_(primary_carbon_next_to_sec_carbon)	#18/601
+[C;$(C=*),$(C#*):1][CH3:2]>>[C:1][C:2](=O)O	0.016	carboxylation_(primary_carbon_next_to_SP2)	#9/550
+[c:1][CH3:2]>>[c:1][C:2](=O)O	0.051	carboxylation_(benzylic_CH3)	#28/544
+
+# -- aliphatic hydroxylation --
+# general [C;X4;!H0;!$(Cc):1]>>[C:1]O		all_aliph_hydr	# /
+[C;X4;H0;$(C[!C]):1][CH3:2]>>[C:1][C:2]O	0.061	aliphatic_hydroxylation_(primary_carbon_next_to_quart_carbon)	#24/395
+[CH1;$(C(-[#6])(-[#6])-[CH3]):1][CH3:2]>>[C:1][C:2]O	0.030	aliphatic_hydroxylation_(primary_carbon_next_to_tert_carbon)	#19/624
+[#6:1][CH2:2][CH3:3]>>[*:1][C:2][C:3]O	0.063	aliphatic_hydroxylation_(primary_carbon_next_to_sec_carbon)	#38/601
+[C;$(C=*),$(C#*):1][CH3:2]>>[C:1][C:2]O	0.049	aliphatic_hydroxylation_(primary_carbon_next_to_SP2_or_SP1)	#27/550
+# fairly unspecific [CX4:1][CH2:2][CX4:3]>>[C:1][C:2](O)[C:3]		secondary_aliphatic_carbon_hydroxylation	# /
+[CX4:1][CH2:2][CH3]>>[C:1][C:2](O)C	0.106	aliphatic_hydroxylation_(sec_carbon,next_to_CH3)	#53/500
+[CX4;H2:1][CH2;R:2][CX4;H2:3]>>[C:1][C:2](O)[C:3]	0.106	aliphatic_hydroxylation_(sec_carbon_in_a_ringA)	#68/642
+[CX4;H2:1][CH2;R:2][CX4;!H2:3][*;$([CH3]),!#6:4]>>[C:1][C:2](O)[C:3][*:4]	0.027	aliphatic_hydroxylation_(sec_carbon_in_a_ringB)	#36/1314
+[CX4:1][CH2;!R:2][*;!c;$(*=*):3]>>[C:1][C:2](O)[*:3]	0.012	aliphatic_hydroxylation_(sec_carbon_next_to_SP2,not_in_a_ring)	#8/668
+[CX4:1][CH2;R:2][*;!c;$(*=*),$([#7]):3]>>[C:1][C:2](O)[*:3]	0.046	aliphatic_hydroxylation_(sec_carbon_next_to_SP2,in_a_ring)	#97/2110
+[*;!c;$(*=*):1][CH2;R:2][*;!c;$(*=*):3]>>[*:1][C:2](O)[*:3]	0.421	aliphatic_hydroxylation_(sec_carbon_both_sides_next_to_SP2,in_a_ring)	#16/38
+[C:1][CH1;X4:2]([C;!$([CH3]):3])[N,C&$([C]=*):4]>>[C:1][C:2](O)([C:3])[*:4]	0.013	aliphatic_hydroxylation_(tert_carbon_next_to_SP2)	#22/1707
+[CH3][CH1;X4;!$(Cc):1][CH3]>>C[C:1](O)C	0.097	aliphatic_hydroxylation_(tert_carbon_linked_to_two_CH3_groups)	#23/236
+
+# -- benzylic hydroxylation --
+[c:1][CH3:2]>>[c:1][C:2]O	0.153	benzylic_hydroxylation_(c-CH3)	#83/544
+[c:1][CH2:2][CH3:3]>>[c:1][C:2](O)[C:3]	0.222	benzylic_hydroxylation_(c-CH2-CH3)	#10/45
+[c:1][CH2:2][#6;!$([CH3]):3]>>[c:1][C:2](O)[*:3]	0.073	benzylic_hydroxylation_(c-CH2-CR)	#78/1069
+[c:1][CH2:2][NH0:3]>>[c:1][C:2](O)[N:3]	0.049	benzylic_hydroxylation_(c-CH2-N)	#9/185
+[c:1][CH1;X4;!$(C[O,N]):2][CH3:3]>>[c:1][C:2](O)[C:3]	0.106	benzylic_hydroxylation_(c-CH1-CH3)	#9/85
+[c:1][CH1;X4;!$(C[O,N]):2][#6;c,$(C=*):3]>>[c:1][C:2](O)[*:3]	0.024	benzylic_hydroxylation_(c-CH1-CR)	#5/211
+
+# -- reduction --
+[C;X4:1][C:2](=[O:3])[C;X4:4]>>[C:1][C:2](-[O:3])[C:4]	0.349	carbonyl_reduction_(aliphatic)	#114/327
+[C;X3:1][C:2](=[O:3])[C;X4:4]>>[C:1][C:2](-[O:3])[C:4]	0.129	carbonyl_reduction_(next_to_SP2_carbon)	#19/147
+[c:1][C:2](=[O:3])[C;X4:4]>>[c:1][C:2](-[O:3])[C:4]	0.269	carbonyl_reduction_(next_to_aromatic_carbon)	#29/108
+[c:1][C:2](=[O:3])[c:4]>>[c:1][C:2](-[O:3])[c:4]	0.041	carbonyl_reduction_(both_sides_next_to_aromatic_carbon)	#5/123
+[C:1][CH1:2]=[O:3]>>[C:1][C:2]-[O:3]	0.088	aldehyde_reduction_(aliphatic)	#3/34
+[c:1][CH1:2]=[O:3]>>[c:1][C:2]-[O:3]	0.200	aldehyde_reduction_(aromatic)	#2/10
+[C;$(C[OH1]),$(C=O):1][C:2]=[C;!$(Cc):3]>>[C:1][C:2]-[C:3]	0.074	double_bond_reduction	#42/568
+[c;$(c=O):1][c:2][cH1;$(co),$(cn):3]>>[C:1]-[C:2]-[CH2:3]	0.126	double_bond_reduction_(aromatic)	#11/87
+[C;$(C[OH1]),$(C=O):1][C:2]=[C;$(Cc):3]>>[C:1][C:2]-[C:3]	0.161	double_bond_reduction_(benzylic)	#14/87
+
+# -- aldehyde oxidation --
+[C:1][CH1:2]=[O:3]>>[C:1][C:2](O)=[O:3]	0.500	aldehyde_oxidation_(aliphatic)	#17/34
+[c:1][CH1:2]=[O:3]>>[c:1][C:2](O)=[O:3]	0.600	aldehyde_oxidation_(aromatic)	#6/10
+
+# -- O-deacetylation --
+[#6:1][O:2]C(=O)[CH3]>>[*:1][O:2]	0.529	O-deacetylation	#72/136
+
+# -- N-deacetylation --
+[N:2]C(=O)[CH3]>>[N:2]	0.175	N-deacetylation	#14/80
+
+# -- decarboxylation --
+[*;!C:1]~[#6:2]C(=O)[OH1]>>[*:1]~[*:2]	0.023	decarboxylation	#16/691
+[O:1]=[C:2][C:3](=O)[OH1]>>[O:1]=[C:2][O:3]	0.222	oxidative_decarboxylation	#2/9
+[CH2:1][CH2]C(=O)[OH1]>>[C:1](=O)O	0.172	beta-oxidation	#28/163
+
+# -- dehydrogenation --
+# all_dehydrogenations [C:1][C:2]>>[C:1]=[C:2]		all_dehydro	# /
+[*;$([#6&X3]),$([#7]~[#6X3]):1][CX4;H1&!$(C-[!#6]),H2:2][CX4;H2:3][*;$([#6&X3]),$([#7]~[#6X3]):4]>>[*:1][CH0:2]=[CH0:3][*:4]	0.041	dehydrogenation_(alpha,beta_to_SP2_both_sides)	#14/342
+# not predictive enough ? [*;$([#6&X3]),$([#7]~[#6X3]):1][CX4;H1&!$(C-[!#6]),H2:2][CX4;H2:3][C;H2,H3:4]>>[*:1][C:2]=[C:3][C:4]	0.00562193	dehydrogenation_(alpha,beta_to_SP2)	# 8/1423
+[#6X3:1][CH1&!$(C-[!#6]):2][CH3:3]>>[*:1][CH0:2]=[CH2:3]	0.011	dehydrogenation_(CH1-CH3->C=CH2)	#3/261
+[#6X3:1][CH2:2][CH3:3]>>[*:1][CH1:2]=[CH2:3]	0.020	dehydrogenation_(CH2-CH3->C=CH2)	#2/100
+[N,c:1][C;X4;H1:2]-[N;X3;H1:3]>>[*:1][CH0:2]=[NH0:3]	0.102	dehydrogenation_(amine)	#5/49
+[c:1][#6:2]1[#6:3]=[#6:4][NH1:5][#6:6]=[#6:7]1>>[c:1][*H0:2]1=[*:3][*:4]=[NH0:5][*:6]=[*:7]1	0.808	dehydrogenation_(aromatization_of_1,4-dihydropyridine)	#21/26
+
+# -- dehydration --
+[CX4@!H0;$(C[*;#6&X3,$([#7]~[#6X3])]):1]-[CX4@;$(C[*;#6&X3,$([#7]~[#6X3])]):2]([OH1])>>[CH0:1]=[C:2]	0.177	dehydration_next_to_SP2_both_sides	#25/141
+[CX4@!H0;!$(C[*;#6&X3,$([#7]~[#6X3])]):1]-[CX4@;$(C[*;#6&X3,$([#7]~[#6X3])]):2]([OH1])>>[CH0:1]=[C:2]	0.017	dehydration_next_to_SP2_a	#7/406
+[CX4@!H0;$(C[*;#6&X3,$([#7]~[#6X3])]):1]-[CX4@;!$(C[*;#6&X3,$([#7]~[#6X3])]):2]([OH1])>>[CH0:1]=[C:2]	0.019	dehydration_next_to_SP2_b	#8/415
+# -- primary alcohol oxidation to carboxyl --
+[c:1][CH2:2][OH1]>>[c:1][C:2](=O)O	0.527	primary_alcohol_oxidation_(benzylic)	#39/74
+[C:1][CH2:2][OH1]>>[C:1][C:2](=O)O	0.199	primary_alcohol_oxidation_(aliphatic)	#84/423
+
+# -- secondary alcohol oxidation to carbonyl --
+[C;!$(C[OH1]):1][CH1:2]([C;!$(C[OH1]):3])-[OH1:4]>>[C:1][CH0:2]([C:3])=[OH0:4]	0.101	secondary_alcohol_oxidation_(aliphatic)	#79/786
+[c:1][CH1:2]([C:3])-[OH1:4]>>[c:1][CH0:2]([C:3])=[OH0:4]	0.115	secondary_alcohol_oxidation_(benzylic)	#17/148
+
+# -- S oxidation --
+[c:1][S;X3:2](=[O:3])[C:4]>>[c:1][S:2](=[O:3])(=O)[C:4]	0.741	sulfoxide_oxidation_(c-S-C)	#20/27
+[C:1][S;X3:2](=[O:3])[C:4]>>[C:1][S:2](=[O:3])(=O)[C:4]	0.353	sulfoxide_oxidation_(C-S-C)	#12/34
+[c:1][S;X3:2](=[O:3])[c:4]>>[c:1][S:2](=[O:3])(=O)[c:4]	0.333	sulfoxide_oxidation_(c-S-c)	#7/21
+[c:1][S;X2:2][C:4]>>[c:1][S:2](=O)[C:4]	0.186	sulfide_oxidation_(c-S-C)	#13/70
+[C:1][S;X2:2][C:4]>>[C:1][S:2](=O)[C:4]	0.237	sulfide_oxidation_(C-S-C)	#50/211
+#[c:1][#16;X2:2][c:4]>>[c:1][#16:2](=O)[c:4]	0.25	sulfide_oxidation_(c-S-c)	# 37/148
+[c:1][S;X2:2][c:4]>>[c:1][S:2](=O)[c:4]	0.571	sulfide_oxidation_(c-S-c)	#40/70
+[sr5:1]>>[sr5:1]=O	0.025	thiophene_oxidation	#3/121
+
+[S;X3;$(S([#6])[#6]):1]=O>>[S:1]	0.195	sulfoxide_reduction	#16/82
+
+# -- epoxide_hydrolysis --
+[C:1]1O[C:2]1>>[C:1](O)[C:2]O	0.333	epoxide_hydrolysis	#10/30
+# not predictive [C:1]=[C:2]>>[C:1]1-[C:2]O1		epoxidation	# /
+
+# -- oxidative_deamination --
+[#6:1][N:2]=;@[C:3]([#6:4])[N:5]>>([*:1][N:2]-[C:3]([*:4])=O.[N:5])	0.057	oxidative_deamination_(amidine)	#3/53
+[nX2:1][c:2][N:3]>>([nH1:1][c:2]=O.[N:3])	0.029	oxidative_deamination_(aromatic)	#23/795
+[C:1][CH2:2][NH2]>>[C:1][CH1:2]=O	0.030	oxidative_deamination_(on_primary_carbon)	#2/67
+[C:1][CH1:2]([C:3])[NH2]>>[C:1][CH0:2]([C:3])=O	0.106	oxidative_deamination_(on_secondary_carbon)	#15/142
+# -- nitro --
+[c:1][N+](=O)[O-]>>[c:1][NH2]	0.122	nitro_to_aniline	#16/131
+[c;$(c1[cH1][cH1][c]([*;!#1])[cH1][cH1]1):1][NH2]>>[c:1][N+](=O)[O-]	0.045	aniline_to_nitro	#3/66
+# not predictive [c:1][N+:2](=[O])[O-]>>[c:1][N:2]=[O]		nitro_to_nitroso	# /
+
+# -- dehalogenation --
+# no occurence [#6:1][C:2](=[O:3])[*;F,Cl,Br,I]>>[#6:1][C:2](=[O:3])O		haloacid_hydrolysis	# /
+# no occurence [C:1]([OH1:2])[*;Cl,Br,I]>>[C:1]=[O:2]		oxidative_dehalogenation	# /
+[CX4;H1,H2:1][Cl,Br,I]>>[C:1]O	0.120	aliphatic_dehalogenation	#11/92
+[c;$(c1ccc([#7])cc1):1][Cl]>>[c:1]O	0.045	aromatic_dechlorination	#4/88
+
+# -- condensation --
+# Consider the next 3 as one rule
+[OH1][C:2]!@[*:3]~!@[*:4][C;!$(CC1OCC(O)C(O)C1O)](=O)-[OH1]>>O1[C:2][*:3]~[*:4]C1=O	0.133	ring_closure_(hydroxyl-5bonds-carboxyl)	#2/15
+[OH1][C:2]@[*:3]~!@[*:4][C;!$(CC1OCC(O)C(O)C1O)](=O)-[OH1]>>O1[C:2][*:3]~[*:4]C1=O	0.133	ring_closure_(hydroxyl-5bonds-carboxyl)	#2/15
+[OH1][C:2]!@[*:3]~@[*:4][C;!$(CC1OCC(O)C(O)C1O)](=O)-[OH1]>>O1[C:2][*:3]~[*:4]C1=O	0.133	ring_closure_(hydroxyl-5bonds-carboxyl)	#2/15
+# Consider the next 3 as one rule
+[NH1;!$(NC=O):1][#6:2]~!@[*:3]~!@[*:4]C(=O)-[OH1]>>[N:1]1[*:2]~[*:3]~[*:4]C1=O	0.438	ring_closure_(NH1-5bonds-carboxyl)2	#7/16
+[NH1;!$(NC=O):1][#6:2]~[*:3]~!@[*:4]C(=O)-[OH1]>>[N:1]1[*:2]~[*:3]~[*:4]C1=O	0.438	ring_closure_(NH1-5bonds-carboxyl)2	#7/16
+[NH1;!$(NC=O):1][#6:2]~!@[*:3]~[*:4]C(=O)-[OH1]>>[N:1]1[*:2]~[*:3]~[*:4]C1=O	0.438	ring_closure_(NH1-5bonds-carboxyl)2	#7/16
+# Consider the next 4 as one rule
+[OH1][C:2]!@[*:3]~!@[*:4]~!@[*:5][C;!$(CC1OCC(O)C(O)C1O)](=O)-[OH1]>>O1[C:2][*:3]~[*:4]~[*:5]C1=O	0.302	ring_closure_(hydroxyl-6bonds-carboxyl)	#16/53
+[OH1][C:2]@[*:3]~!@[*:4]~!@[*:5][C;!$(CC1OCC(O)C(O)C1O)](=O)-[OH1]>>O1[C:2][*:3]~[*:4]~[*:5]C1=O	0.302	ring_closure_(hydroxyl-6bonds-carboxyl)	#16/53
+[OH1][C:2]!@[*:3]~@[*:4]~!@[*:5][C;!$(CC1OCC(O)C(O)C1O)](=O)-[OH1]>>O1[C:2][*:3]~[*:4]~[*:5]C1=O	0.302	ring_closure_(hydroxyl-6bonds-carboxyl)	#16/53
+[OH1][C:2]!@[*:3]~!@[*:4]~@[*:5][C;!$(CC1OCC(O)C(O)C1O)](=O)-[OH1]>>O1[C:2][*:3]~[*:4]~[*:5]C1=O	0.302	ring_closure_(hydroxyl-6bonds-carboxyl)	#16/53
+# Consider the next 4 as one rule
+[NH1;!$(NC=O):1][#6:2]~!@[*:3]~!@[*:4]~!@[*:5]C(=O)-[OH1]>>[N:1]1[*:2]~[*:3]~[*:4]~[*:5]C1=O	0.424	ring_closure_(NH1-6bonds-carboxyl)	#14/33
+[NH1;!$(NC=O):1][#6:2]~@[*:3]~!@[*:4]~!@[*:5]C(=O)-[OH1]>>[N:1]1[*:2]~[*:3]~[*:4]~[*:5]C1=O	0.424	ring_closure_(NH1-6bonds-carboxyl)	#14/33
+[NH1;!$(NC=O):1][#6:2]~!@[*:3]~@[*:4]~!@[*:5]C(=O)-[OH1]>>[N:1]1[*:2]~[*:3]~[*:4]~[*:5]C1=O	0.424	ring_closure_(NH1-6bonds-carboxyl)	#14/33
+[NH1;!$(NC=O):1][#6:2]~!@[*:3]~!@[*:4]~@[*:5]C(=O)-[OH1]>>[N:1]1[*:2]~[*:3]~[*:4]~[*:5]C1=O	0.424	ring_closure_(NH1-6bonds-carboxyl)	#14/33
+# presumed [OH1:1][C:2][A:3][A:4][C:5](=[O:6])[N:7]>>[O:1]1[C:2][A:3][A:4][C:5]1=[O:6].[N:7]		hydroxyl-amide_5ring_closure	# /
+# presumed [OH1:1][C:2][A:3][A:4][A:5][C:6](=[O:7])-[N:8]>>[O:1]1[C:2][A:3][A:4][A:5][C:6]1=[O:7].[N:8]hydroxyl-amide_6ring_closure	# /
+# presumed [OH1:1][C:2][A:3][N:4][C:5](=[O:6])>>[O:1]1[C:2][A:3][N:4].[C:5]1=[O:6]		hydroxyl-amide_5ring_rearr	# /
+# presumed [OH1:1][C:2][A:3][A:4][N:5][C:6](=[O:7])>>[O:1]1[C:2][A:3][A:4][N:5].[C:6]1=[O:7]		hydroxyl-amide_6ring_rearr	# /
+
+# -- hydrolysis --
+[C;$(C=O):1][O:2][CH3]>>[C:1][O:2]	0.357	hydrolysis_(methoxyester)	#35/98
+[C$(C[#6!H3]):2](=[O:3])O[#6!H3:4]>>([C:2](=[O:3])O.O[*:4])	0.272	hydrolysis_(ester)	#268/984
+[C$(C[#6!H3]):2](=[O:3])[NH2]>>[C:2](=[O:3])O	0.294	hydrolysis_(primary_amide)	#30/102
+[C$(C[#6!H3]):2](=[O:3])[NH1:4][#6:5]>>([C:2](=[O:3])O.[N:4][*:5])	0.092	hydrolysis_(secondary_amide)	#109/1191
+[C$(C[#6!H3]):2](=[O:3])[#7:4]([#6:5])[#6:6]>>([C:2](=[O:3])O.[*:4]([*:5])[*:6])	0.096	hydrolysis_(tertiary_amide)	#61/637
+[C$(C[#6!H3]):2](=[O:3])[N:4][*;!#6:5]>>([C:2](=[O:3])O.[N:4][*:5])	0.189	hydrolysis_(heteroatom_bonded_amide)	#18/95
+[#7,#8:1][C:2](=[O:3])[#7,#8:4][*:5]>>([*:1][C:2](=[O:3])O.[*H1:4][*:5])	0.053	hydrolysis_(urea_or_carbonate)	#57/1066
+[*:5][*;!#6;!$(S(=O)(=O)N);!$(P(O)(O)(O)=O):1](=[*;!#6:2])[N,O:3][*:4]>>([*:5][*:1](=[*:2])O.[*:3][*:4])	0.174	hydrolysis_(X=X-X_exclude_phosphate)	#55/317
+[#6:1][N:2][CH1]([OH1])[*:3]>>([*:1][N:2].C(=O)[*:3])	0.102	hydrolysis_(CNC(OH)R)	#5/49
+# now covered by oxidative deamination (aromatic): [n:2][c:3]!@[N;$(N(C)(C)c),$(NS(=O)=O):5]>>([n:2][c:3]O.[N:5])	0.0215385	hydrolysis_(N-substituted-pyridine)	# 7/325
+
+# -- N-oxidation --
+[C;X4;!H3;!$(C(N)[!#6;!#1]):1][N;X3:2]([C;X4;!H3;!$(C(N)[!#6;!#1]):3])[C;X4;!H3;!$(C(N)[!#6;!#1]):4]>>[C:1][N+:2]([C:3])([C:4])[O-]	0.060	N-oxidation_(tertiary_N)	#30/503
+[C;X4;!H3;!$(C(N)[!#6;!#1]):1][N;X3:2]([CH3:3])[C;X4;!H3;!$(C(N)[!#6;!#1]):4]>>[C:1][N+:2]([C:3])([C:4])[O-]	0.190	N-oxidation_(tertiary_NCH3)	#38/200
+[C;X4;!$(C(N)[!#6;!#1]):1][N;X3:2]([CH3:3])[CH3:4]>>[C:1][N+:2]([C:3])([C:4])[O-]	0.195	N-oxidation_(RN(CH3)2)	#30/154
+[#6:1]~[#7;X2;R:2]~[#6:3]>>[*:1]~[*+:2](~[*:3])[O-]	0.036	N-oxidation_(-N=)	#47/1313
+[c:1][NH2:2]>>[c:1][N:2]O	0.014	N-oxidation_(aniline)	#4/277
+
+# -- acetyl_shift --
+[#6:1][C:2](=O)O[C:5][C:6][OH1]>>[*:1][C:2](=O)O[C:6][C:5]O	0.071	acetyl_shift	#8/113
+
+# -- tautomerisation --
+[c:1][C:2](=[O:3])[CH2:4][#6:5]>>[c:1][C:2](-[O:3])=[C:4][*:5]	0.036	tautomerisation_(keto->enol)	#2/55
+
+# -- special rules --
+[#6:3][CH1:1]=[CH2:2]>>[*:3][C:1](O)-[C:2]O	0.200	vinyl_oxidation	#12/60
+[#6:3][C:1]([CH3:4])=[CH2:2]>>[*:3][C:1]([CH3:4])(O)-[C:2]O	0.300	isopropenyl_oxidation	#3/10
+[CH2:1][CH2;R:2][N:3]>>[C:1][C:2](=O)[N:3]	0.048	oxidation_(amine_in_a_ring)	#53/1108
+[#6:1][C:2]([#6:3])=[N;!$(N-N):4]>>([*:1][C:2]([*:3])=O.[N:4])	0.027	imine_hydrolysis	#3/113
+[#6:2]=[N:4]-[N:5]>>([*:2]=O.[N:4]-[N:5])	0.204	hydrazone_hydrolysis	#11/54
+[c:1][N:2]=[N:3][c:4]>>([c:1][N:2].[N:3][c:4])	0.778	diazene_cleavage	#7/9
+[*:1][N:2]=[N+]=[N-]>>[*:1][N:2]	0.500	azide_cleavage	#4/8
+[#6:1][c:2]1[cH1:3][cH1:4][cH1:5][cH1:6][cH1:7]1>>[*:1][c:2]1[c:3][c:4](OC)[c:5](O)[c:6][c:7]1	0.021	aromatic_oxidation	#12/573
+# discarded [*;!#1:7][#6:1](:1):[#6:2]:[#6H1:3]:[#6H1:4]:[#6:5]:[#6:6]:1>>[*:7][#6:1](-1)=[#6:2]-[#6:3](O)-[#6:4](O)-[#6:5]=[#6:6]-1		try	# /
+[P:1]=[S]>>[P:1]=[O]	0.294	phosphine_sulphide_hydrolysis	#10/34
+# low occurence [N:1][CH1:2]=[N:3]>>[N:1][CH1:2](O)=[N:3]		xanthine_oxidation	# /
+[#7,O;H1:1][#6:2]:1:[#6:3]:[#6:4]:[#6:5](:[#6:6]:[#6:7]:1)[#7,O;H1:8]>>[*:1]=[*:2]-1-[*:3]=[*:4]-[*:5](-[*:6]=[*:7]-1)=[*:8]	0.045	oxidation_to_quinone	#4/89
+[#6:1][O:2]@[CH1:3]([OH1:4])[*:5]>>([*:1][O:2].[C:3]([O:4])[*:5])	0.300	cyclic_hemiacetal_ring_opening	#3/10
+[NX2:1]=[CH1:2]>>[N:1]-[C:2]=O	0.028	oxidation_(C=N)	#1/36
+[#6X3:1][I]>>[*:1]	0.125	deiodonidation	#3/24
+[C:1]#N>>[C:1](=O)-N	0.013	nitrile_to_amide	#1/75
+
+# -- steroids --
+[C;$(C~1~C~C~C~C~2~C~C~C~3~C~4~C~C~C~C~4~C~C~C~3~C~2~1):1]1[C:2][C:3](=[O:30])[C:4][C:5]=[C:6]1>>[C:1]1[C:2][C:3](=[O:30])[C:4]=[C:5]-[C:6]1	0.667	steroid_d5d4	#2/3
+[C;$(C~1~C~2~C~C~C~3~C~4~C~C~C~C~C~4~C~C~C~3~C~2~C~C~1):17]([OH1:30])!@[C:31]>>([C:17]=[OH0:30].[C:31])	0.056	steroid_17hydroxy_to_keto	#9/162

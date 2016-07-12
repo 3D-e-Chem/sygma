@@ -1,0 +1,50 @@
+# *** PHASE 2 ***
+
+# -- O-glucuronidation --
+[C;!$(C1CCOCC1);!$(C1COCCC1);!$(C(O)=O):1][OH1:2]>>[C:1][O:2]C1OC(C(O)=O)C(O)C(O)C1O	0.101	O-glucuronidation_(aliphatic_hydroxyl)	#208/2064
+[c:1][OH1:2]>>[c:1][O:2]C1OC(C(O)=O)C(O)C(O)C1O	0.250	O-glucuronidation_(aromatic_hydroxyl)	#274/1097
+[#7:1][OH1:2]>>[*:1][O:2]C1OC(C(O)=O)C(O)C(O)C1O	0.213	O-glucuronidation_(N-hydroxyl)	#10/47
+[C:1][C;!$(C(O)(=O)C1OCCCC1):2](=O)[OH1]>>[C:1][C:2](=O)OC1OC(C(O)=O)C(O)C(O)C1O	0.150	O-glucuronidation_(aliphatic_carboxyl)	#113/751
+[c:1][C:2](=O)[OH1]>>[c:1][C:2](=O)OC1OC(C(O)=O)C(O)C(O)C1O	0.311	O-glucuronidation_(aromatic_carboxyl)	#57/183
+
+# -- N-glucuronidation --
+# not predictive [#6:1][#7:2]>>[#6:1][#7:2]C1OC(C(O)=O)C(O)C(O)C1O		N-gluc_general	# /
+[c:1][NH2;X3:2]>>[c:1][N:2]C1OC(C(O)=O)C(O)C(O)C1O	0.036	N-glucuronidation_(aniline)	#10/277
+[C:1][NH2;X3:2]>>[C:1][N:2]C1OC(C(O)=O)C(O)C(O)C1O	0.013	N-glucuronidation_(aliphatic_NH2)	#6/476
+[c:1][NH1;X3:2]>>[c:1][N:2]C1OC(C(O)=O)C(O)C(O)C1O	0.028	N-glucuronidation_(aniline_NH1-R)	#16/565
+[N;X3;$(N([CH3])([CH3])[CH2]C):1]>>[N+:1]C1OC(C(O)=O)C(O)C(O)C1O	0.095	N-glucuronidation_(N(CH3)2)	#9/95
+[N;X3;R;$(N(C)(C)[CH3]):1]>>[N+:1]C1OC(C(O)=O)C(O)C(O)C1O	0.027	N-glucuronidation_(NCH3_in_a_ring)	#6/222
+[NH1;X3;R;$(N(C)C):1]>>[N:1]C1OC(C(O)=O)C(O)C(O)C1O	0.019	N-glucuronidation_(NH_in_a_ring)	#7/359
+[n;X2:1]>>[n+:1]C1OC(C(O)=O)C(O)C(O)C1O	0.014	N-glucuronidation_(aromatic_=n-)	#22/1588
+[nH1;X3:1]>>[n:1]C1OC(C(O)=O)C(O)C(O)C1O	0.020	N-glucuronidation_(aromatic_-nH-)	#7/344
+
+# -- sulfation --
+[c:1][OH1:2]>>[c:1][O:2]S(=O)(=O)O	0.119	sulfation_(aromatic_hydroxyl)	#131/1097
+[c:1][NH2:2]>>[c:1][N:2]S(=O)(=O)O	0.011	sulfation_(aniline)	#3/277
+[C;!$(C=O);!$(CC[OH1]):1][OH1:2]>>[C:1][O:2]S(=O)(=O)O	0.018	sulfation_(aliphatic_hydroxyl)	#33/1796
+# not predictive [c:1][NH1:2][#6:3]>>[c:1][N:2]([#6:3])S(=O)(=O)O		aromatic_N_sulfation2	# /
+# not predictive [C:1][NH2:2]>>[C:1][N:2]S(=O)(=O)O		aliphatic_N_sulfation1	# /
+# not predictive[C:1][NH1;R:2][C:3]>>[C:1][N:2]([C:3])S(=O)(=O)O		aliphatic_N_sulfation2	# /
+
+# -- N-acetylation --
+[c:1][NH2:2]>>[c:1][N:2]C(=O)C	0.271	N-acetylation_(aniline)	#75/277
+[C;!$(C=[*;!#6]):1][NH2:2]>>[C:1][N:2]C(=O)C	0.149	N-acetylation_(aliphatic_NH2)	#37/248
+[*;!#6:1][NH2:2]>>[*:1][N:2]C(=O)C	0.157	N-acetylation_(heteroatom_bonded_NH2)	#8/51
+[CX4:1][NH1;R:2][CX4:3]>>[C:1][N:2]([C:3])C(=O)C	0.032	N-acetylation_(NH1)	#4/124
+[CH3:1][NH1:2][#6:3]>>[CH3:1][N:2]([*:3])C(=O)C	0.020	N-acetylation_(NH1-CH3)	#3/149
+# not predictive [nH1;$(n(c)c):1]>>[n:1]C(=O)C	0.003	N-acetylation_(aromatic_-nH-)	# 1/311
+
+# -- O-acetylation --
+# not predictive, only few occurences [*:1][OH1:2]>>[*:1][O:2]C(=O)C		OH_acetylation	# /
+
+# -- methylation --
+[c:1][OH1:2]>>[c:1][O:2]C	0.054	methylation_(aromatic_OH)	#59/1097
+[#6:1][SH1:2]>>[#6:1][S:2]C	0.375	methylation_(thiol)	#9/24
+
+# -- glycination --
+[c:1][C:2](=O)[OH1]>>[c:1][C:2](=O)NCC(=O)O	0.087	glycination_(aromatic_carboxyl)	#16/183
+[C!$(CN):1][C:2](=O)[OH1]>>[C:1][C:2](=O)NCC(=O)O	0.036	glycination_(aliphatic_carboxyl)	#19/535
+
+# -- phosphorylation --
+[OH1;$(O[CH2]C1AACO1),$(OP([OH1])(=O)OCC1AACO1),$(OP([OH1])(=O)OP(O)(=O)OCC1AACO1):1]>>[O:1]P(O)(O)=O	0.403	phosphorylation	#27/67
+[#6,P:1][O:2][P:3]([O:4])([O:5])=[O:6]>>([*;#6,P:1][O:2].O[P:3]([O:4])([O:5])=[O:6])	0.203	dephosphorylation	#37/182
