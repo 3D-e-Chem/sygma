@@ -32,6 +32,7 @@ class Network:
             products = self.react(node.mol, rule.reaction)
             for x in products:
                 ikey = AllChem.InchiToInchiKey(AllChem.MolToInchi(x))[:14]
+                x.SetProp("_Name", ikey)
                 node.children.append(ikey)
                 if ikey in self.nodes:
                     if node.ikey not in self.nodes[ikey].parents or \
@@ -67,41 +68,35 @@ class Network:
                     node.score = newscore   # to avoid closed loops ...
                     node.path = self.nodes[pkey].path + node.parents[pkey].rulename + "; \n"
 
-    def sortkey(self, rowdict):
-        return rowdict['SyGMa_score']
 
-    def to_list(self):
+    def to_list(self, filter_small_fragments = True):
+        def sortkey(rowdict):
+            return rowdict['SyGMa_score']
         output_list = []
+        n_parent_atoms = self.nodes[self.parentkey].mol.GetNumAtoms()
         for key in self.nodes:
-            path = "parent" if key == self.parentkey else self.nodes[key].path
+            if filter_small_fragments and float(self.nodes[key].n_original_atoms) <= 0.15 * n_parent_atoms:
+                continue
+            path = "parent;" if key == self.parentkey else self.nodes[key].path
             output_list.append({"parent": self.nodes[self.parentkey].mol,
-                         "SyGMa_reaction": path,
+                         "SyGMa_path": path,
                          "SyGMa_metabolite": self.nodes[key].mol,
                          "SyGMa_score": self.nodes[key].score})
-        output_list.sort(key=self.sortkey, reverse=True)
+        output_list.sort(key=sortkey, reverse=True)
         return output_list
 
-    def to_smiles(self):
-        output_list = []
-        for key in self.nodes:
-            path = "parent" if key == self.parentkey else self.nodes[key].path
-            output_list.append({"SyGMa_reaction": path,
-                         "SyGMa_metabolite": self.nodes[key].mol,
-                         "SyGMa_score": self.nodes[key].score})
-        output_list.sort(key=self.sortkey, reverse=True)
+    def to_smiles(self, filter_small_fragments = True):
+        output_list = self.to_list(filter_small_fragments=filter_small_fragments)
+        smiles_list = ""
         for entry in output_list:
-            print Chem.MolToSmiles(entry['SyGMa_metabolite']), entry['SyGMa_score']
+            smiles_list += Chem.MolToSmiles(entry['SyGMa_metabolite']) + str(entry['SyGMa_score']) + '\n'
+        return smiles_list
 
-
-    def write_sdf(self, filename='/dev/stdout'):
-        mol_list = []
-        for key in self.nodes:
-            if key == self.parentkey:
-                self.nodes[key].path = "parent; \n"
-            self.nodes[key].tree_info_to_mol()
-            mol_list.append({"SyGMa_metabolite": self.nodes[key].mol,
-                             "SyGMa_score": self.nodes[key].score})
-        mol_list.sort(key=self.sortkey, reverse=True)
+    def write_sdf(self, filename='/dev/stdout', filter_small_fragments = True):
+        output_list = self.to_list(filter_small_fragments=filter_small_fragments)
         sdf = Chem.SDWriter(filename)
-        for entry in mol_list:
-            sdf.write(entry['SyGMa_metabolite'])
+        for entry in output_list:
+            mol = entry['SyGMa_metabolite']
+            mol.SetProp("Path", entry['SyGMa_path'][:-1])
+            mol.SetProp("Score", str(entry['SyGMa_score']))
+            sdf.write(mol)

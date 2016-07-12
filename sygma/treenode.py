@@ -10,6 +10,7 @@ class TreeNode:
         self.ikey = AllChem.InchiToInchiKey(AllChem.MolToInchi(mol))[:14]
         self.score = score
         self.path = path
+        self.n_original_atoms = None
 
     def gen_coords(self):
         """ Calculate 2D positions for atoms without coordinates """
@@ -20,7 +21,8 @@ class TreeNode:
             pos = conf.GetAtomPosition(i)
             if pos.x != 0.0 or pos.y != 0.0:
                 coord_dict[i] = Geometry.Point2D(pos.x, pos.y)
-        if len(coord_dict) > 0:
+        self.n_original_atoms = len(coord_dict)
+        if self.n_original_atoms > 1:
             # calculate average length of all bonds with coordinates
             total = 0
             n = 0
@@ -33,19 +35,5 @@ class TreeNode:
             av = total / n
             # compute coordinates for new atoms, keeping known coordinates
             AllChem.Compute2DCoords(self.mol, coordMap=coord_dict, bondLength=av)
-
-    def print_sum(self):
-        print "parents:"
-        print self.parents
-        print "children:"
-        print self.children
-        print "path:"
-        print self.path,
-        print "score:"
-        print self.score
-        print ""
-
-    def tree_info_to_mol(self):
-        self.mol.SetProp("_Name", self.ikey)
-        self.mol.SetProp("Path", self.path[:-1])
-        self.mol.SetProp("Score", str(self.score))
+        else:
+            AllChem.Compute2DCoords(self.mol)

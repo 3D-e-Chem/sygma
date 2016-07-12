@@ -14,15 +14,14 @@ def run_sygma(args):
     ])
 
     parent = Chem.MolFromSmiles(args.parentmol)
-    if args.outputtype == "sdf":
-        Chem.AllChem.Compute2DCoords(parent)
+    Chem.AllChem.Compute2DCoords(parent)
     metabolites_network = scenario.run(parent)
     metabolites_network.calc_scores()
+    metabolites_network.add_coordinates()
     if args.outputtype == "sdf":
-        metabolites_network.add_coordinates()
         metabolites_network.write_sdf()
     elif args.outputtype == "smiles":
-        print metabolites_network.to_smiles()
+        print metabolites_network.to_smiles()[:-1]
 
     return None
 
