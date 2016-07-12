@@ -17,11 +17,14 @@ class Network:
         ps = reaction.RunReactants([reactant])
         products = []
         for product in ps:
-            frags = (Chem.GetMolFrags(product[0], asMols=True))
+            frags = (Chem.GetMolFrags(product[0], asMols=True, sanitizeFrags=False))
             for p in frags:
                 q = copy.copy(p)
-                Chem.SanitizeMol(q)
-                products.append(q)
+                try:
+                    Chem.SanitizeMol(q)
+                    products.append(q)
+                except:
+                    pass # Ignore fragments that cannot be sanitized
         return products
 
     def metabolize_node(self, node, rules):
