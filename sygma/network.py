@@ -52,15 +52,16 @@ class Network:
             self.calc_score(self.nodes[key])
 
     def calc_score(self, node):
-        if node.score > 0:
+        if node.score != None:
             return
         else:
+            node.score = -1 # Indicating the score is "waiting" for a result
             for pkey in node.parents:
-                if self.nodes[pkey].score is None:
-                    self.calc_score(self.nodes[pkey])
+                if self.nodes[pkey].score is None:      # No calculation is requested for parents with score -1,
+                    self.calc_score(self.nodes[pkey])   # to avoid closed loops ....
                 newscore = self.nodes[pkey].score * float(node.parents[pkey].probability)
-                if node.score < newscore:
-                    node.score = newscore
+                if node.score < newscore:   # This implies that parents with a newscore of -1 are ignored,
+                    node.score = newscore   # to avoid closed loops ...
                     node.path = self.nodes[pkey].path + node.parents[pkey].rulename + "; \n"
 
     def sortkey(self, rowdict):
