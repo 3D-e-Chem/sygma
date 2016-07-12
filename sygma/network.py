@@ -63,16 +63,41 @@ class Network:
                     node.score = newscore
                     node.path = self.nodes[pkey].path + node.parents[pkey].rulename + "; \n"
 
-    def to_list(self, parent_key_name=None):
-        def sortkey(rowdict):
-            return rowdict['SyGMa_score']
+    def sortkey(self, rowdict):
+        return rowdict['SyGMa_score']
 
-        list = []
+    def to_list(self):
+        output_list = []
         for key in self.nodes:
             path = "parent" if key == self.parentkey else self.nodes[key].path
-            list.append({"parent": self.nodes[self.parentkey].mol,
+            output_list.append({"parent": self.nodes[self.parentkey].mol,
                          "SyGMa_reaction": path,
                          "SyGMa_metabolite": self.nodes[key].mol,
                          "SyGMa_score": self.nodes[key].score})
-        list.sort(key=sortkey, reverse=True)
-        return list
+        output_list.sort(key=self.sortkey, reverse=True)
+        return output_list
+
+    def to_smiles(self):
+        output_list = []
+        for key in self.nodes:
+            path = "parent" if key == self.parentkey else self.nodes[key].path
+            output_list.append({"SyGMa_reaction": path,
+                         "SyGMa_metabolite": self.nodes[key].mol,
+                         "SyGMa_score": self.nodes[key].score})
+        output_list.sort(key=self.sortkey, reverse=True)
+        for entry in output_list:
+            print Chem.MolToSmiles(entry['SyGMa_metabolite']), entry['SyGMa_score']
+
+
+    def write_sdf(self, filename='/dev/stdout'):
+        mol_list = []
+        for key in self.nodes:
+            if key == self.parentkey:
+                self.nodes[key].path = "parent; \n"
+            self.nodes[key].tree_info_to_mol()
+            mol_list.append({"SyGMa_metabolite": self.nodes[key].mol,
+                             "SyGMa_score": self.nodes[key].score})
+        mol_list.sort(key=self.sortkey, reverse=True)
+        sdf = Chem.SDWriter(filename)
+        for entry in mol_list:
+            sdf.write(entry['SyGMa_metabolite'])
