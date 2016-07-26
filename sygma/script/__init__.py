@@ -4,7 +4,6 @@ import argparse
 import sygma
 import sys, logging, shutil
 from rdkit import Chem
-from rdkit.Chem import AllChem
 
 
 def run_sygma(args):
@@ -14,7 +13,6 @@ def run_sygma(args):
     ])
 
     parent = Chem.MolFromSmiles(args.parentmol)
-    Chem.AllChem.Compute2DCoords(parent)
     metabolites_network = scenario.run(parent)
     metabolites_network.calc_scores()
     metabolites_network.add_coordinates()

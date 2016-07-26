@@ -21,6 +21,9 @@ class Scenario:
         return rules
 
     def run(self, parentmol):
+        if parentmol.GetNumConformers() == 0:
+            # make sure the parentmolecule has coordinates
+            AllChem.Compute2DCoords(parentmol)
         network = Network(parentmol)
         for name, cycles, rules in self.scenario:
             network.metabolize_all_nodes(rules, cycles)
