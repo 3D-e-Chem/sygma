@@ -30,8 +30,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--version', action='version', version='%(prog)s ' + sygma.version())
     ap.add_argument('-o', '--outputtype', help="Molecule output type (default: %(default)s)", default="sdf", type=str)
-    ap.add_argument('-1', '--phase1', help="Number of phase 1 cycles", type=int)
-    ap.add_argument('-2', '--phase2', help="Number of phase 2 cycles", type = int)
+    ap.add_argument('-1', '--phase1', help="Number of phase 1 cycles (default: %(default)s)", default=1, type=int)
+    ap.add_argument('-2', '--phase2', help="Number of phase 2 cycles (default: %(default)s)", default=1, type=int)
     ap.add_argument('parentmol', help="Smiles string of parent molecule structure", type=str)
     """Parse arguments and run subcommand"""
     args = ap.parse_args(sys.argv[1:])
