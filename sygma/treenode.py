@@ -3,6 +3,23 @@ from rdkit.Chem import AllChem, rdMolTransforms
 
 
 class TreeNode:
+    """
+    Class containing a node of the SyGMa network
+
+    :key mol:
+        RDKit Molecule
+    :key parents:
+        Dictonary {inchikey_of_parent: rulename_transforming_parent_to_self}
+    :key children:
+        List of inchikeys of the child nodes
+    :key score:
+        Value between 0 and 1
+    :key path:
+        String describing the pathway from parent to self
+    :key n_original_atoms:
+        Integer, number of atoms originating from parent or None if not yet determined
+    """
+
     def __init__(self, mol, parent="", rule=None, score=None, path=""):
         self.mol = mol
         self.parents = {parent: rule}
@@ -13,7 +30,10 @@ class TreeNode:
         self.n_original_atoms = None
 
     def gen_coords(self):
-        """ Calculate 2D positions for atoms without coordinates """
+        """
+        Calculate 2D positions for atoms in self.mol without coordinates
+        """
+
         conf = self.mol.GetConformer(0)
         coord_dict = {}
         # Put known coordinates in coordDict

@@ -5,6 +5,12 @@ from sygma.treenode import TreeNode
 
 
 class Network:
+    """
+    Class to build and analyse a metabolic network
+
+    :param parentmol:
+        An RDKit molecule
+    """
     def __init__(self, parentmol=None):
         self.nodes = {}
         if parentmol:
@@ -12,8 +18,8 @@ class Network:
             self.nodes[parentnode.ikey] = parentnode
             self.parentkey = parentnode.ikey
 
-    def react(self, reactant, reaction):
-        """ Apply reaction to reactant and return products """
+    def _react(self, reactant, reaction):
+        """Apply reaction to reactant and return products"""
         ps = reaction.RunReactants([reactant])
         products = []
         for product in ps:
@@ -29,7 +35,7 @@ class Network:
 
     def metabolize_node(self, node, rules):
         for rule in rules:
-            products = self.react(node.mol, rule.reaction)
+            products = self._react(node.mol, rule.reaction)
             for x in products:
                 ikey = AllChem.InchiToInchiKey(AllChem.MolToInchi(x))[:14]
                 x.SetProp("_Name", ikey)
@@ -42,16 +48,30 @@ class Network:
                     self.nodes[ikey] = TreeNode(x, parent=node.ikey, rule=rule)
 
     def metabolize_all_nodes(self, rules, cycles=1):
+        """
+        Metabolize all nodes according to [rules], for [cycles] number of cycles
+
+        :param rules:
+            List of rules
+        :param cycles:
+            Integer indicating the number of subsequent steps to apply the rules
+        """
         for i in range(cycles):
             ikeys = self.nodes.keys()
             for ikey in ikeys:
                 self.metabolize_node(self.nodes[ikey], rules)
 
     def add_coordinates(self):
+        """
+        Add missing atomic coordinates to all metabolites
+        """
         for node in self.nodes.itervalues():
             node.gen_coords()
 
     def calc_scores(self):
+        """
+        Calculate probability scores for all metabolites
+        """
         for key in self.nodes:
             self.calc_score(self.nodes[key])
 
@@ -70,6 +90,15 @@ class Network:
 
 
     def to_list(self, filter_small_fragments = True):
+        """
+        Generate a list of metabolites
+
+        :param filter_small_fragments:
+            Boolean to activate filtering all metabolites with less then 15% of original atoms (of the parent)
+        :return:
+            A list of dictionaries for each metabolites, containing the SyGMa_metabolite (an RDKit Molecule),
+            SyGMa_path and SyGMa_score, sorted by decreasing probability.
+        """
         def sortkey(rowdict):
             return rowdict['SyGMa_score']
         output_list = []
@@ -86,6 +115,15 @@ class Network:
         return output_list
 
     def to_smiles(self, filter_small_fragments = True):
+        """
+        Generate a smiles list of metabolites
+
+        :param filter_small_fragments:
+            Boolean to activate filtering all metabolites with less then 15% of original atoms (of the parent)
+        :return:
+            A multiline string containing the SyGMa_metabolite (as smiles),
+            and SyGMa_score for each metabolite, sorted by decreasing probability.
+        """
         output_list = self.to_list(filter_small_fragments=filter_small_fragments)
         smiles_list = ""
         for entry in output_list:
@@ -93,6 +131,14 @@ class Network:
         return smiles_list
 
     def write_sdf(self, filename='/dev/stdout', filter_small_fragments = True):
+        """
+        Generate an SDFile with metabolites including the SyGMa_pathway and the SyGMa score as properties
+
+        :param filename:
+            The filename for the SDF to be generated
+        :param filter_small_fragments:
+            Boolean to activate filtering all metabolites with less then 15% of original atoms (of the parent)
+        """
         output_list = self.to_list(filter_small_fragments=filter_small_fragments)
         sdf = Chem.SDWriter(filename)
         for entry in output_list:
