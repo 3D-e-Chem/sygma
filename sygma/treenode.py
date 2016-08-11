@@ -14,19 +14,19 @@ class TreeNode:
         List of inchikeys of the child nodes
     :key score:
         Value between 0 and 1
-    :key path:
+    :key pathway:
         String describing the pathway from parent to self
     :key n_original_atoms:
         Integer, number of atoms originating from parent or None if not yet determined
     """
 
-    def __init__(self, mol, parent="", rule=None, score=None, path=""):
+    def __init__(self, mol, parent="", rule=None, score=None, pathway=""):
         self.mol = mol
         self.parents = {parent: rule}
         self.children = []
         self.ikey = AllChem.InchiToInchiKey(AllChem.MolToInchi(mol))[:14]
         self.score = score
-        self.path = path
+        self.pathway = pathway
         self.n_original_atoms = None
 
     def gen_coords(self):

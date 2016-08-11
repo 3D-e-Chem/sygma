@@ -14,7 +14,7 @@ class Tree:
     def __init__(self, parentmol=None):
         self.nodes = {}
         if parentmol:
-            parentnode = TreeNode(parentmol, parent=None, rule=None, score=1, path="")
+            parentnode = TreeNode(parentmol, parent=None, rule=None, score=1, pathway="")
             self.nodes[parentnode.ikey] = parentnode
             self.parentkey = parentnode.ikey
 
@@ -86,7 +86,7 @@ class Tree:
                 newscore = self.nodes[pkey].score * float(node.parents[pkey].probability)
                 if node.score < newscore:   # This implies that parents with a newscore of -1 are ignored,
                     node.score = newscore   # to avoid closed loops ...
-                    node.path = self.nodes[pkey].path + node.parents[pkey].rulename + "; \n"
+                    node.pathway = self.nodes[pkey].pathway + node.parents[pkey].rulename + "; \n"
 
 
     def to_list(self, filter_small_fragments = True):
@@ -97,7 +97,7 @@ class Tree:
             Boolean to activate filtering all metabolites with less then 15% of original atoms (of the parent)
         :return:
             A list of dictionaries for each metabolites, containing the SyGMa_metabolite (an RDKit Molecule),
-            SyGMa_path and SyGMa_score, sorted by decreasing probability.
+            SyGMa_pathway and SyGMa_score, sorted by decreasing probability.
         """
         def sortkey(rowdict):
             return rowdict['SyGMa_score']
@@ -106,9 +106,9 @@ class Tree:
         for key in self.nodes:
             if filter_small_fragments and float(self.nodes[key].n_original_atoms) <= 0.15 * n_parent_atoms:
                 continue
-            path = "parent;" if key == self.parentkey else self.nodes[key].path
+            pathway = "parent;" if key == self.parentkey else self.nodes[key].pathway
             output_list.append({"parent": self.nodes[self.parentkey].mol,
-                         "SyGMa_path": path,
+                         "SyGMa_pathway": pathway,
                          "SyGMa_metabolite": self.nodes[key].mol,
                          "SyGMa_score": self.nodes[key].score})
         output_list.sort(key=sortkey, reverse=True)
@@ -143,6 +143,6 @@ class Tree:
         sdf = Chem.SDWriter(filename)
         for entry in output_list:
             mol = entry['SyGMa_metabolite']
-            mol.SetProp("Path", entry['SyGMa_path'][:-1])
+            mol.SetProp("Pathway", entry['SyGMa_pathway'][:-1])
             mol.SetProp("Score", str(entry['SyGMa_score']))
             sdf.write(mol)

@@ -18,4 +18,4 @@ def test_predict_phenol_metabolites():
     metabolite_list = metabolic_tree.to_list()
     assert len(metabolite_list) == 12
     assert metabolite_list[0]['SyGMa_score'] == 1
-    assert metabolite_list[1]['SyGMa_path'] == 'O-glucuronidation_(aromatic_hydroxyl); \n'
+    assert metabolite_list[1]['SyGMa_pathway'] == 'O-glucuronidation_(aromatic_hydroxyl); \n'
