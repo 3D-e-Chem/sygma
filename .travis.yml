@@ -14,6 +14,7 @@ script:
 after_script:
   - pip install codacy_coverage
   - coverage xml
+  - python-codacy-coverage -r coverage.xml
 
 
 

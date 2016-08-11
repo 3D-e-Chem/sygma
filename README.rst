@@ -7,6 +7,11 @@ SyGMa: combining expert knowledge and empirical scoring in the prediction of met
 ChemMedChem, 3(5), 821-832
 <http://onlinelibrary.wiley.com/doi/10.1002/cmdc.200700312/full>`_.
 
+.. image:: https://api.codacy.com/project/badge/Grade/7f18ab1d1a80437f8e28ac1676c70519
+    :target: https://www.codacy.com/app/3D-e-Chem/sygma?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=3D-e-Chem/sygma&amp;utm_campaign=Badge_Grade
+.. image:: https://travis-ci.org/3D-e-Chem/sygma.svg?branch=master
+    :target: https://travis-ci.org/3D-e-Chem/sygma
+
 Requirements
 ------------
 SyGMa requires RDKit with INCHI support
