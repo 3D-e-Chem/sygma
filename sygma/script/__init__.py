@@ -2,7 +2,7 @@
 
 import argparse
 import sygma
-import sys, logging, shutil
+import sys
 from rdkit import Chem
 
 
@@ -23,15 +23,20 @@ def run_sygma(args):
 
     return None
 
-def main():
-    "Entry point for magma script"
+def get_sygma_parser():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--version', action='version', version='%(prog)s ' + sygma.version())
     ap.add_argument('-o', '--outputtype', help="Molecule output type (default: %(default)s)", default="sdf", type=str)
     ap.add_argument('-1', '--phase1', help="Number of phase 1 cycles (default: %(default)s)", default=1, type=int)
     ap.add_argument('-2', '--phase2', help="Number of phase 2 cycles (default: %(default)s)", default=1, type=int)
     ap.add_argument('parentmol', help="Smiles string of parent molecule structure", type=str)
-    """Parse arguments and run subcommand"""
+    return ap
+
+def main():
+    """Entry point for magma script"""
+
+    # Parse arguments and run subcommand
+    ap = get_sygma_parser()
     args = ap.parse_args(sys.argv[1:])
     return run_sygma(args)
 

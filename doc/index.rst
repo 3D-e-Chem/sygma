@@ -13,6 +13,7 @@ Contents:
 
    Introduction <self>
    api
+   command
 
 .. include:: introduction.rst
 
