@@ -6,7 +6,7 @@ before_install:
   - bash miniconda.sh -b -p conda
   - source conda/bin/activate root
   - conda update --yes -q conda
-  - conda install --yes -c https://conda.binstar.org/rdkit
+  - conda install --yes -c https://conda.binstar.org/rdkit rdkit
   - conda install --yes nose coverage setuptools pip
 install:
   - cd sygma && python setup.py develop && cd ..
