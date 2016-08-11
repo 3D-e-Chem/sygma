@@ -127,7 +127,7 @@ class Network:
         output_list = self.to_list(filter_small_fragments=filter_small_fragments)
         smiles_list = ""
         for entry in output_list:
-            smiles_list += Chem.MolToSmiles(entry['SyGMa_metabolite']) + str(entry['SyGMa_score']) + '\n'
+            smiles_list += Chem.MolToSmiles(entry['SyGMa_metabolite']) + " " + str(entry['SyGMa_score']) + '\n'
         return smiles_list
 
     def write_sdf(self, filename='/dev/stdout', filter_small_fragments = True):

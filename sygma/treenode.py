@@ -41,6 +41,9 @@ class TreeNode:
             pos = conf.GetAtomPosition(i)
             if pos.x != 0.0 or pos.y != 0.0:
                 coord_dict[i] = Geometry.Point2D(pos.x, pos.y)
+        # Currently the presence of coordinates is used to determine n_original_atoms
+        # This requires SyGMa to always work with structures with atomic coordinates
+        # TODO: Derive n_original_atoms independent from the calculation of coordinates
         self.n_original_atoms = len(coord_dict)
         if self.n_original_atoms > 1:
             # calculate average length of all bonds with coordinates

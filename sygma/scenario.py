@@ -39,6 +39,7 @@ class Scenario:
         network = Network(parentmol)
         for name, cycles, rules in self.scenario:
             network.metabolize_all_nodes(rules, cycles)
+        network.add_coordinates()
         return network
 
 

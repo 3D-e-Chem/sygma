@@ -14,7 +14,6 @@ def test_predict_phenol_metabolites():
 
     metabolites_network = scenario.run(parent)
     metabolites_network.calc_scores()
-    metabolites_network.add_coordinates()
 
     metabolite_list = metabolites_network.to_list()
     assert len(metabolite_list) == 12
