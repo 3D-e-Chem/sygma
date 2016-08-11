@@ -13,13 +13,13 @@ def run_sygma(args):
     ])
 
     parent = Chem.MolFromSmiles(args.parentmol)
-    metabolites_network = scenario.run(parent)
-    metabolites_network.calc_scores()
-    metabolites_network.add_coordinates()
+    metabolic_tree = scenario.run(parent)
+    metabolic_tree.calc_scores()
+    metabolic_tree.add_coordinates()
     if args.outputtype == "sdf":
-        metabolites_network.write_sdf()
+        metabolic_tree.write_sdf()
     elif args.outputtype == "smiles":
-        print metabolites_network.to_smiles()[:-1]
+        print metabolic_tree.to_smiles()[:-1]
 
     return None
 

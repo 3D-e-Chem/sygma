@@ -4,9 +4,9 @@ import copy
 from sygma.treenode import TreeNode
 
 
-class Network:
+class Tree:
     """
-    Class to build and analyse a metabolic network
+    Class to build and analyse a metabolic tree
 
     :param parentmol:
         An RDKit molecule

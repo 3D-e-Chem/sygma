@@ -1,5 +1,5 @@
 from scenario import *
-from network import *
+from tree import *
 from treenode import *
 from ruleset import *
 

@@ -13,10 +13,9 @@ parents = input_table[parents_column_name]
 
 metabolites = []
 for parent in parents:
-    metabolites_network = scenario.run(parent)
-    metabolites_network.calc_scores()
-    metabolites_network.add_coordinates()
-    metabolites += metabolites_network.to_list()
+    metabolic_tree = scenario.run(parent)
+    metabolic_tree.calc_scores()
+    metabolites += metabolic_tree.to_list()
 
 metabolites_df = pd.DataFrame(metabolites)
 output_table = pd.merge(input_table,

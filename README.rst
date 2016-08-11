@@ -31,10 +31,10 @@ Example: generating metabolites of phenol
     # An rdkit molecule, optionally with 2D coordinates, is required as parent molecule
     parent = Chem.MolFromSmiles("c1ccccc1O")
 
-    metabolites_network = scenario.run(parent)
-    metabolites_network.calc_scores()
+    metabolic_tree = scenario.run(parent)
+    metabolic_tree.calc_scores()
 
-    print metabolites_network.to_smiles()
+    print metabolic_tree.to_smiles()
 
 
 

@@ -1,8 +1,8 @@
 API
 ===
-.. automodule:: sygma
+.. automodule:: scenario
     :members:
-.. automodule:: network
+.. automodule:: tree
     :members:
 .. automodule:: treenode
     :members:

@@ -1,5 +1,5 @@
 from rdkit.Chem import AllChem
-from sygma.network import Network
+from sygma.tree import Tree
 
 
 class Scenario:
@@ -31,16 +31,16 @@ class Scenario:
         :param parentmol:
             An RDKit molecule
         :return:
-            A sygma.Network object
+            A sygma.Tree object
         """
         if parentmol.GetNumConformers() == 0:
             # make sure the parentmolecule has coordinates
             AllChem.Compute2DCoords(parentmol)
-        network = Network(parentmol)
+        tree = Tree(parentmol)
         for name, cycles, rules in self.scenario:
-            network.metabolize_all_nodes(rules, cycles)
-        network.add_coordinates()
-        return network
+            tree.metabolize_all_nodes(rules, cycles)
+        tree.add_coordinates()
+        return tree
 
 
 class Rule:

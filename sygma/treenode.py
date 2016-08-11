@@ -4,7 +4,7 @@ from rdkit.Chem import AllChem, rdMolTransforms
 
 class TreeNode:
     """
-    Class containing a node of the SyGMa network
+    Class containing a node of the SyGMa tree
 
     :key mol:
         RDKit Molecule

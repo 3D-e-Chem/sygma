@@ -12,10 +12,10 @@ def test_predict_phenol_metabolites():
     # An rdkit molecule, optionally with 2D coordinates, is required as parent molecule
     parent = Chem.MolFromSmiles("c1ccccc1O")
 
-    metabolites_network = scenario.run(parent)
-    metabolites_network.calc_scores()
+    metabolic_tree = scenario.run(parent)
+    metabolic_tree.calc_scores()
 
-    metabolite_list = metabolites_network.to_list()
+    metabolite_list = metabolic_tree.to_list()
     assert len(metabolite_list) == 12
     assert metabolite_list[0]['SyGMa_score'] == 1
     assert metabolite_list[1]['SyGMa_path'] == 'O-glucuronidation_(aromatic_hydroxyl); \n'
