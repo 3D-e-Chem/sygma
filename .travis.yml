@@ -6,12 +6,14 @@ before_install:
   - bash miniconda.sh -b -p conda
   - source conda/bin/activate root
   - conda update --yes -q conda
-  - conda install --yes -c https://conda.binstar.org/rdkit rdkit
-  - conda install --yes nose coverage setuptools pip
+  - conda install --yes -c https://conda.binstar.org/rdkit rdkit nose coverage setuptools pip
 install:
-  - cd sygma && python setup.py develop && cd ..
-before_script:
-  - pip install nose coveralls
+  - python setup.py develop
 script:
-  - cd sygma && nosetests && cd ..
-  - cp sygma/.coverage .coverage && coverage combine && coveralls
+  - nosetests --cover-package=sygma --with-coverage --cover-erase --cover-branches
+after_script:
+  - pip install codacy_coverage
+  - coverage xml
+
+
+
