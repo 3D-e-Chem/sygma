@@ -20,6 +20,11 @@ except ImportError:
 
 ext_modules = []
 
+requires = [
+    'sphinx',
+    'sphinx_rtd_theme',
+    'nose']
+
 setup(
     name='SyGMa',
     version="1.0",
