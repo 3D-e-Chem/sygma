@@ -2,6 +2,14 @@ from rdkit.Chem import AllChem
 from sygma.tree import Tree
 
 
+def read_reaction_rules(filename):
+    rules = []
+    for l in open(filename, "r"):
+        if l != "\n" and l[0] != "#":
+            smarts, probability, name = l.split("\t")[0:3]
+            rules.append(Rule(name, probability, smarts))
+    return rules
+
 class Scenario:
     """
     Class to read and process metabolic scenario
@@ -14,17 +22,9 @@ class Scenario:
     def __init__(self, scenario):
         self.rules = {}
         for step in scenario:
-            name, cycles = step
-            step.append(self.read_reaction_rules(name))
+            name = step[0]
+            step.append(read_reaction_rules(name))
         self.scenario = scenario
-
-    def read_reaction_rules(self, filename):
-        rules = []
-        for l in open(filename, "r"):
-            if l != "\n" and l[0] != "#":
-                smarts, probability, name, rest = l.split("\t")
-                rules.append(Rule(name, probability, smarts))
-        return rules
 
     def run(self, parentmol):
         """
