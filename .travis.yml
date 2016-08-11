@@ -1,0 +1,17 @@
+language: python
+python:
+  - "2.7"
+before_install:
+  - wget -nc http://repo.continuum.io/miniconda/Miniconda-3.5.5-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p conda
+  - source conda/bin/activate root
+  - conda update --yes -q conda
+  - conda install --yes -c https://conda.binstar.org/rdkit
+  - conda install --yes nose coverage setuptools pip
+install:
+  - cd sygma && python setup.py develop && cd ..
+before_script:
+  - pip install nose coveralls
+script:
+  - cd sygma && nosetests && cd ..
+  - cp sygma/.coverage .coverage && coverage combine && coveralls
