@@ -2,7 +2,7 @@ language: python
 python:
   - "2.7"
 before_install:
-  - wget -nc http://repo.continuum.io/miniconda/Miniconda-3.5.5-Linux-x86_64.sh -O miniconda.sh
+  - wget -nc http://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
   - bash miniconda.sh -b -p conda
   - source conda/bin/activate root
   - conda update --yes -q conda
