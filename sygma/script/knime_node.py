@@ -22,3 +22,4 @@ output_table = pd.merge(input_table,
                         metabolites_df,
                         left_on=parents_column_name,
                         right_on='parent')
+del output_table['parent']
