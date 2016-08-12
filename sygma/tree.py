@@ -1,6 +1,7 @@
 from rdkit import Chem
 from rdkit.Chem import AllChem
 import copy
+import sys
 from sygma.treenode import TreeNode
 import logging
 logger = logging.getLogger('sygma')
@@ -124,26 +125,26 @@ class Tree:
         :param filter_small_fragments:
             Boolean to activate filtering all metabolites with less then 15% of original atoms (of the parent)
         :return:
-            A multiline string containing the SyGMa_metabolite (as smiles),
-            and SyGMa_score for each metabolite, sorted by decreasing probability.
+            A list of metabolites as list ``[[SyGMa_metabolite as smiles, SyGMa_score]]``
+            sorted by decreasing probability score.
         """
         output_list = self.to_list(filter_small_fragments=filter_small_fragments)
-        smiles_list = ""
+        smiles_list = []
         for entry in output_list:
-            smiles_list += Chem.MolToSmiles(entry['SyGMa_metabolite']) + " " + str(entry['SyGMa_score']) + '\n'
+            smiles_list.append([Chem.MolToSmiles(entry['SyGMa_metabolite']),entry['SyGMa_score']])
         return smiles_list
 
-    def write_sdf(self, filename='/dev/stdout', filter_small_fragments = True):
+    def write_sdf(self, file=sys.stdout, filter_small_fragments = True):
         """
         Generate an SDFile with metabolites including the SyGMa_pathway and the SyGMa score as properties
 
-        :param filename:
-            The filename for the SDF to be generated
+        :param file:
+            The SDF file to write to
         :param filter_small_fragments:
             Boolean to activate filtering all metabolites with less then 15% of original atoms (of the parent)
         """
         output_list = self.to_list(filter_small_fragments=filter_small_fragments)
-        sdf = Chem.SDWriter(filename)
+        sdf = Chem.SDWriter(file)
         for entry in output_list:
             mol = entry['SyGMa_metabolite']
             mol.SetProp("Pathway", entry['SyGMa_pathway'][:-1])

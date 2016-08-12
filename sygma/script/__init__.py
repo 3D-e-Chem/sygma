@@ -9,7 +9,7 @@ import logging
 logging.basicConfig()
 logger = logging.getLogger('sygma')
 
-def run_sygma(args):
+def run_sygma(args, file=sys.stdout):
     logger.setLevel(args.loglevel.upper())
     scenario = sygma.Scenario([
         [sygma.ruleset['phase1'], args.phase1],
@@ -20,10 +20,9 @@ def run_sygma(args):
     metabolic_tree = scenario.run(parent)
     metabolic_tree.calc_scores()
     if args.outputtype == "sdf":
-        metabolic_tree.write_sdf()
+        metabolic_tree.write_sdf(file)
     elif args.outputtype == "smiles":
-        print metabolic_tree.to_smiles()[:-1]
-
+        file.write("\n".join([m+" "+str(s) for m,s in metabolic_tree.to_smiles()])+'\n')
     return None
 
 def get_sygma_parser():
