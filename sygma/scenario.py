@@ -1,5 +1,7 @@
 from rdkit.Chem import AllChem
 from sygma.tree import Tree
+import logging
+logger = logging.getLogger('sygma')
 
 
 def read_reaction_rules(filename):
@@ -38,6 +40,7 @@ class Scenario:
             AllChem.Compute2DCoords(parentmol)
         tree = Tree(parentmol)
         for name, cycles, rules in self.scenario:
+            logger.info('Applying rules: ' + name)
             tree.metabolize_all_nodes(rules, cycles)
         tree.add_coordinates()
         return tree

@@ -3,10 +3,14 @@
 import argparse
 import sygma
 import sys
-from rdkit import Chem
-
+from rdkit import Chem, RDLogger
+RDLogger.logger().setLevel(RDLogger.ERROR)
+import logging
+logging.basicConfig()
+logger = logging.getLogger('sygma')
 
 def run_sygma(args):
+    logger.setLevel(args.loglevel.upper())
     scenario = sygma.Scenario([
         [sygma.ruleset['phase1'], args.phase1],
         [sygma.ruleset['phase2'], args.phase2]
@@ -15,7 +19,6 @@ def run_sygma(args):
     parent = Chem.MolFromSmiles(args.parentmol)
     metabolic_tree = scenario.run(parent)
     metabolic_tree.calc_scores()
-    metabolic_tree.add_coordinates()
     if args.outputtype == "sdf":
         metabolic_tree.write_sdf()
     elif args.outputtype == "smiles":
@@ -29,6 +32,8 @@ def get_sygma_parser():
     ap.add_argument('-o', '--outputtype', help="Molecule output type (default: %(default)s)", default="sdf", type=str)
     ap.add_argument('-1', '--phase1', help="Number of phase 1 cycles (default: %(default)s)", default=1, type=int)
     ap.add_argument('-2', '--phase2', help="Number of phase 2 cycles (default: %(default)s)", default=1, type=int)
+    ap.add_argument('-l', '--loglevel', help="Set logging level (default: %(default)s)", default='info',
+                    choices=['debug', 'info', 'warn',' error'])
     ap.add_argument('parentmol', help="Smiles string of parent molecule structure", type=str)
     return ap
 

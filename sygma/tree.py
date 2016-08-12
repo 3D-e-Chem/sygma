@@ -2,6 +2,8 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 import copy
 from sygma.treenode import TreeNode
+import logging
+logger = logging.getLogger('sygma')
 
 
 class Tree:
@@ -57,6 +59,7 @@ class Tree:
             Integer indicating the number of subsequent steps to apply the rules
         """
         for i in range(cycles):
+            logger.info('Cycle ' + str(i + 1))
             ikeys = self.nodes.keys()
             for ikey in ikeys:
                 self.metabolize_node(self.nodes[ikey], rules)
