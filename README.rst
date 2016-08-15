@@ -13,6 +13,8 @@ ChemMedChem, 3(5), 821-832
     :target: https://www.codacy.com/app/3D-e-Chem/sygma?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=3D-e-Chem/sygma&amp;utm_campaign=Badge_Grade
 .. image:: https://api.codacy.com/project/badge/Coverage/7f18ab1d1a80437f8e28ac1676c70519
     :target: https://www.codacy.com/app/3D-e-Chem/sygma?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=3D-e-Chem/sygma&amp;utm_campaign=Badge_Coverage
+.. image:: https://img.shields.io/badge/docker-ready-blue.svg
+    :target: https://hub.docker.com/r/3dechem/sygma
 
 Requirements
 ------------
@@ -44,5 +46,9 @@ Example: generating metabolites of phenol
     print metabolic_tree.to_smiles()
 
 
+Docker
+------
+SyGMa can be executed in a Docker (https://www.docker.com/) container as follows:
+.. code-block:: bash
 
-
+    docker run 3dechem/sygma c1ccccc1O
