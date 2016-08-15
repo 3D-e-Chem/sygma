@@ -49,6 +49,7 @@ Example: generating metabolites of phenol
 Docker
 ------
 SyGMa can be executed in a Docker (https://www.docker.com/) container as follows:
+
 .. code-block:: bash
 
     docker run 3dechem/sygma c1ccccc1O

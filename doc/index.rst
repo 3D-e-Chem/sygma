@@ -22,6 +22,14 @@ Example
 .. include:: ../sygma/test/test_sygma.py
     :code: python
 
+Docker
+------
+SyGMa can be executed in a `Docker <https://www.docker.com/>`_ container as follows:
+
+.. code-block:: bash
+
+    docker run 3dechem/sygma c1ccccc1O
+
 Rulesets
 --------
 .. automodule:: ruleset
