@@ -93,12 +93,14 @@ class Tree:
                     node.pathway = self.nodes[pkey].pathway + node.parents[pkey].rulename + "; \n"
 
 
-    def to_list(self, filter_small_fragments = True):
+    def to_list(self, filter_small_fragments = True, parent_column = 'parent'):
         """
         Generate a list of metabolites
 
         :param filter_small_fragments:
             Boolean to activate filtering all metabolites with less then 15% of original atoms (of the parent)
+        :param parent_column:
+            String containing the name for the column with the parent molecule
         :return:
             A list of dictionaries for each metabolites, containing the SyGMa_metabolite (an RDKit Molecule),
             SyGMa_pathway and SyGMa_score, sorted by decreasing probability.
@@ -111,7 +113,7 @@ class Tree:
             if filter_small_fragments and float(self.nodes[key].n_original_atoms) <= 0.15 * n_parent_atoms:
                 continue
             pathway = "parent;" if key == self.parentkey else self.nodes[key].pathway
-            output_list.append({"parent": self.nodes[self.parentkey].mol,
+            output_list.append({parent_column: self.nodes[self.parentkey].mol,
                          "SyGMa_pathway": pathway,
                          "SyGMa_metabolite": self.nodes[key].mol,
                          "SyGMa_score": self.nodes[key].score})
