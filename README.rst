@@ -23,6 +23,9 @@ SyGMa requires RDKit with INCHI support
 Installation
 ------------
 * See http://www.rdkit.org/docs/Install.html for RDKit installation instructions.
+* pip install sygma
+OR, after downloading sygma:
+
 * python setup.py install
 
 Example: generating metabolites of phenol
