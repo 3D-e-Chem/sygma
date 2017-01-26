@@ -8,7 +8,7 @@ before_install:
   - conda update --yes -q conda
   - conda install --yes -c https://conda.binstar.org/rdkit rdkit nose coverage setuptools pip
 install:
-  - python setup.py develop
+  - pip install -r requirements.txt
 script:
   - nosetests --cover-package=sygma --with-coverage --cover-erase --cover-branches
 after_script:

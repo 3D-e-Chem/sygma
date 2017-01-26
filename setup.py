@@ -20,11 +20,6 @@ except ImportError:
 
 ext_modules = []
 
-requires = [
-    'sphinx',
-    'sphinx_rtd_theme',
-    'nose']
-
 setup(
     name='SyGMa',
     version="1.0",
@@ -41,7 +36,6 @@ setup(
                  "Topic :: Scientific/Engineering :: Chemistry",
                  ],
     packages=find_packages(),
-    install_requires=['nose'],
     package_data={'sygma': ['rules/*.txt']},
     entry_points={'console_scripts': ['sygma = sygma.script:main']}
 )
