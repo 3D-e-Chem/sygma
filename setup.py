@@ -22,7 +22,7 @@ ext_modules = []
 
 setup(
     name='SyGMa',
-    version="1.0",
+    version="1.0.1",
     license='GPL',
     author='Lars Ridder',
     author_email='lars.ridder@esciencecenter.nl>',
@@ -34,6 +34,7 @@ setup(
                  "Natural Language :: English",
                  "Operating System :: OS Independent",
                  "Topic :: Scientific/Engineering :: Chemistry",
+                 "Programming Language :: Python :: 2.7",
                  ],
     packages=find_packages(),
     package_data={'sygma': ['rules/*.txt']},
