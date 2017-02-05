@@ -15,6 +15,8 @@ ChemMedChem, 3(5), 821-832
     :target: https://www.codacy.com/app/3D-e-Chem/sygma?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=3D-e-Chem/sygma&amp;utm_campaign=Badge_Coverage
 .. image:: https://img.shields.io/badge/docker-ready-blue.svg
     :target: https://hub.docker.com/r/3dechem/sygma
+.. image:: https://anaconda.org/3d-e-chem/sygma/badges/installer/conda.svg
+    :target: https://conda.anaconda.org/3d-e-chem
 
 Requirements
 ------------
