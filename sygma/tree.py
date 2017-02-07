@@ -1,3 +1,4 @@
+from builtins import object
 from rdkit import Chem
 from rdkit.Chem import AllChem
 import copy
@@ -7,7 +8,7 @@ import logging
 logger = logging.getLogger('sygma')
 
 
-class Tree:
+class Tree(object):
     """
     Class to build and analyse a metabolic tree
 
@@ -61,7 +62,7 @@ class Tree:
         """
         for i in range(cycles):
             logger.info('Cycle ' + str(i + 1))
-            ikeys = self.nodes.keys()
+            ikeys = list(self.nodes.keys())
             for ikey in ikeys:
                 self.metabolize_node(self.nodes[ikey], rules)
 
@@ -69,7 +70,7 @@ class Tree:
         """
         Add missing atomic coordinates to all metabolites
         """
-        for node in self.nodes.itervalues():
+        for node in self.nodes.values():
             node.gen_coords()
 
     def calc_scores(self):

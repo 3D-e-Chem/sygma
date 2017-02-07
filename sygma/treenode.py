@@ -47,7 +47,7 @@ class TreeNode:
         self.n_original_atoms = len(coord_dict)
         if self.n_original_atoms > 1:
             # calculate average length of all bonds with coordinates
-            total = 0
+            total = 0.0
             n = 0
             for bond in self.mol.GetBonds():
                 b = bond.GetBeginAtomIdx()

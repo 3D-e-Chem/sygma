@@ -1,3 +1,4 @@
+from builtins import object
 from rdkit.Chem import AllChem
 from sygma.tree import Tree
 import logging
@@ -12,7 +13,7 @@ def read_reaction_rules(filename):
             rules.append(Rule(name, probability, smarts))
     return rules
 
-class Scenario:
+class Scenario(object):
     """
     Class to read and process metabolic scenario
 
@@ -46,7 +47,7 @@ class Scenario:
         return tree
 
 
-class Rule:
+class Rule(object):
     """
     Class to contain a metabolic rule
 
