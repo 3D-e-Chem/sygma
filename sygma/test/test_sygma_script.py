@@ -1,8 +1,9 @@
-from future import standard_library
-standard_library.install_aliases()
 import sygma
 import argparse
-from io import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 
 def test_sygma_command_line1():
