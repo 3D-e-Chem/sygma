@@ -35,6 +35,7 @@ setup(
                  "Operating System :: OS Independent",
                  "Topic :: Scientific/Engineering :: Chemistry",
                  "Programming Language :: Python :: 2.7",
+                 "Programming Language :: Python :: 3.5",
                  ],
     packages=find_packages(),
     package_data={'sygma': ['rules/*.txt']},

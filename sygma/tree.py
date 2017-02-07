@@ -1,4 +1,3 @@
-from builtins import object
 from rdkit import Chem
 from rdkit.Chem import AllChem
 import copy

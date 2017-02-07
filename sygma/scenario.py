@@ -1,4 +1,3 @@
-from builtins import object
 from rdkit.Chem import AllChem
 from sygma.tree import Tree
 import logging
