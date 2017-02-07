@@ -1,5 +1,6 @@
 """SyGMa: Systematically Generating potential Metabolites"""
 
+from builtins import str
 import argparse
 import sygma
 import sys
