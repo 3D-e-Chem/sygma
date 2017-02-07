@@ -20,9 +20,11 @@ except ImportError:
 
 ext_modules = []
 
+from sygma import __version__
+
 setup(
     name='SyGMa',
-    version="1.0.1",
+    version=__version__,
     license='GPL',
     author='Lars Ridder',
     author_email='lars.ridder@esciencecenter.nl>',

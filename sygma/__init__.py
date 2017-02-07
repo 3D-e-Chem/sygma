@@ -3,5 +3,4 @@ from sygma.tree import *
 from sygma.treenode import *
 from sygma.ruleset import *
 
-def version():
-    return '1.0'
+__version__ = '1.1.0'
