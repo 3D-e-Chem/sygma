@@ -3,7 +3,9 @@ channels:
   - rdkit
   - defaults
   - bioconda
+  - 3d-e-chem
 dependencies:
   - rdkit
   - sphinx-argparse
   - future
+  - sygma
