@@ -1,6 +1,2 @@
 conda:
-  - channels:
-    - defaults
-    - rdkit
-  - dependencies:
-    - rdkit
+    file: environment.yml

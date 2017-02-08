@@ -1,0 +1,6 @@
+name: sygma
+channels:
+  - rdkit
+  - defaults
+dependencies:
+  - rdkit
