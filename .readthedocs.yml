@@ -1,0 +1,6 @@
+conda:
+  - channels:
+    - defaults
+    - rdkit
+  - dependencies:
+    - rdkit
