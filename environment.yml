@@ -2,5 +2,7 @@ name: sygma
 channels:
   - rdkit
   - defaults
+  - bioconda
 dependencies:
   - rdkit
+  - sphinx-argparse
