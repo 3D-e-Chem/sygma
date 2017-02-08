@@ -6,3 +6,4 @@ channels:
 dependencies:
   - rdkit
   - sphinx-argparse
+  - future
