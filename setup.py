@@ -40,7 +40,7 @@ setup(
                  "Programming Language :: Python :: 3.5",
                  ],
     packages=find_packages(),
-    install_requires=['future'],
+    install_requires=['future', 'sphinx-argparse'],
     package_data={'sygma': ['rules/*.txt']},
     entry_points={'console_scripts': ['sygma = sygma.script:main']}
 )
