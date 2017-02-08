@@ -13,5 +13,12 @@ SyGMa requires RDKit with INCHI support
 
 Installation
 ------------
-* See http://www.rdkit.org/docs/Install.html for RDKit installation instructions.
-* python setup.py install
+* Install with Anaconda: ``conda install -c 3d-e-Chem -c rdkit sygma``
+
+OR
+
+* Install RDKit following the instructions in http://www.rdkit.org/docs/Install.html
+
+AND
+
+* ``pip install sygma`` OR, after downloading sygma, ``python setup.py install``
