@@ -17,6 +17,8 @@ ChemMedChem, 3(5), 821-832
     :target: https://hub.docker.com/r/3dechem/sygma
 .. image:: https://anaconda.org/3d-e-chem/sygma/badges/installer/conda.svg
     :target: https://conda.anaconda.org/3d-e-chem
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1043307.svg
+   :target: https://doi.org/10.5281/zenodo.1043307
 
 Requirements
 ------------
