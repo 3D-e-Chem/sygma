@@ -1,0 +1,24 @@
+# YAML 1.2
+# Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
+cff-version: 1.0.3
+message: If you use this software, please cite it as below.
+title: SyGMa
+doi: 10.5281/zenodo.1043307
+authors:
+- given-names: Lars
+  family-names: Ridder
+  affiliation: Netherlands eScience Center
+version: 1.1.1
+date-released: 2017-11-07
+repository-code: https://github.com/3D-e-Chem/sygma
+license: GPL-3.0
+references:
+- type: article
+  doi: 10.1002/cmdc.200700312
+  title: 'SyGMa: Combining Expert Knowledge and Empirical Scoring in the Prediction
+    of Metabolites'
+  authors:
+  - given-names: Lars
+    family-names: Ridder
+  - given-names: Markus
+    family-names: Wagener
